@@ -1,0 +1,13 @@
+{
+  "name": "coach-bot",
+  "version": "1.0.0",
+  "description": "ICF-aligned AI coaching assistant — Supabase Edge Function + behavior.json policy",
+  "scripts": {
+    "upload-behavior": "node scripts/upload_behavior.js",
+    "deploy": "supabase functions deploy coach-bot --project-ref yxndmpwqvdatkujcukdv"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^16.3.1"
+  }
+}

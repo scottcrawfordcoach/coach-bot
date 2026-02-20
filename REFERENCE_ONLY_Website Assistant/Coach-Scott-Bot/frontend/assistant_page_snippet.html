@@ -1,0 +1,355 @@
+<!-- COACH SCOTT ASSISTANT PAGE - TWO COLUMN LAYOUT -->
+<!-- Copy this entire block into your GoDaddy Custom HTML block at /assistant -->
+
+<style>
+    /* Container for side-by-side layout */
+    .assistant-page-container {
+        display: flex;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Chat column */
+    .chat-column {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100vh - 60px);
+    }
+
+    /* Info column - fixed width */
+    .info-column {
+        width: 350px;
+        flex-shrink: 0;
+    }
+
+    /* Chat container styling - matching index.html */
+    #assistant-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        width: 100%;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+    }
+
+    /* Quick question buttons */
+    .quick-questions {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 14px 0 0 0;
+        flex-shrink: 0;
+    }
+
+    .quick-questions button {
+        background: white;
+        color: #007BFF;
+        border: 1.5px solid #007BFF;
+        padding: 10px 8px;
+        border-radius: 20px;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        text-align: center;
+        word-wrap: break-word;
+        line-height: 1.3;
+    }
+
+    .quick-questions button:hover {
+        background: #007BFF;
+        color: white;
+    }
+
+    /* Info cards */
+    .info-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .info-card h2 {
+        font-size: 18px;
+        color: #007BFF;
+        margin: 0 0 15px 0;
+    }
+
+    .info-card h3 {
+        font-size: 16px;
+        color: #333;
+        margin: 16px 0 8px 0;
+    }
+
+    .info-card p {
+        line-height: 1.5;
+        font-size: 13px;
+        color: #555;
+        margin: 0 0 10px 0;
+    }
+
+    .info-card ul {
+        margin: 0 0 12px 20px;
+        padding: 0;
+    }
+
+    .info-card li {
+        margin-bottom: 6px;
+        line-height: 1.4;
+        font-size: 13px;
+        color: #555;
+    }
+
+    .disclaimer {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 12px;
+        margin-top: 12px;
+        border-radius: 4px;
+    }
+
+    .disclaimer p {
+        color: #856404;
+        font-size: 12px;
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    /* Mobile responsive - stack vertically */
+    @media (max-width: 968px) {
+        .assistant-page-container {
+            flex-direction: column;
+        }
+
+        .info-column {
+            width: 100%;
+            order: 2;
+        }
+
+        .chat-column {
+            order: 1;
+            max-height: none;
+            display: block;
+        }
+
+        #assistant-container {
+            height: 500px;
+            flex: none;
+        }
+
+        .quick-questions {
+            grid-template-columns: repeat(2, 1fr);
+            padding: 12px 0 0 0;
+        }
+    }
+</style>
+
+<div class="assistant-page-container">
+    <!-- LEFT: Chat Column -->
+    <div class="chat-column">
+        <div id="assistant-container">
+            
+            <!-- Header -->
+            <div style="background-color: #007BFF; color: white; padding: 15px; display: flex; align-items: center;">
+                <div style="width: 40px; height: 40px; background-color: #ddd; border-radius: 50%; margin-right: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <img src="https://yxndmpwqvdatkujcukdv.supabase.co/storage/v1/object/public/web-content/scott-avatar.jpg" alt="Coach Scott" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div>
+                    <div style="font-weight: bold; font-size: 16px;">Coach Scott Bot</div>
+                    <div style="font-size: 12px; opacity: 0.9;">AI assistant</div>
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div id="chat-box" style="flex: 1; overflow-y: auto; padding: 15px; background-color: #f9f9f9; display: flex; flex-direction: column; gap: 10px;">
+                <div style="align-self: flex-start; background-color: #e9e9eb; color: black; padding: 10px 15px; border-radius: 18px 18px 18px 0; max-width: 80%;">
+                    Hi! I'm Coach Scott's AI assistant. Ask me anything about my services, wellness, fitness, or nutrition!
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div style="padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; background: white;">
+                <input id="chat-input" type="text" placeholder="Type a message..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;">
+                <button onclick="sendMsg()" style="background-color: #007BFF; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold;">Send</button>
+            </div>
+
+        </div>
+
+        <!-- Quick Question Buttons -->
+        <div class="quick-questions">
+            <button onclick="askQuestion(this)">Am I fit enough for your classes?</button>
+            <button onclick="askQuestion(this)">Why coaching AND training?</button>
+            <button onclick="askQuestion(this)">What's the vibe like in your groups?</button>
+            <button onclick="askQuestion(this)">How much is this going to cost me?</button>
+            <button onclick="askQuestion(this)">What groups have free spots?</button>
+            <button onclick="askQuestion(this)">What are the gym closure dates this year?</button>
+        </div>
+    </div>
+
+    <!-- RIGHT: Info Column -->
+    <div class="info-column">
+        <div class="info-card">
+            <h2>💬 How to Use This Assistant</h2>
+            <p>This AI assistant can help you with:</p>
+            <ul>
+                <li><strong>Service Information</strong> – Learn about coaching packages, class schedules, and pricing</li>
+                <li><strong>Wellness Advice</strong> – Get guidance on fitness, nutrition, and healthy living</li>
+                <li><strong>Class Availability</strong> – Check current class times and enrollment status</li>
+                <li><strong>General Questions</strong> – Ask about Coach Scott's approach and philosophy</li>
+            </ul>
+            
+            <h3>Tips for Best Results:</h3>
+            <ul>
+                <li>Be specific with your questions</li>
+                <li>Ask one question at a time</li>
+            </ul>
+        </div>
+
+        <div class="info-card">
+            <h2>⚠️ Important Disclaimer</h2>
+            <p><strong>This is an AI assistant and not a substitute for professional advice.</strong></p>
+            
+            <div class="disclaimer">
+                <p><strong>Please note:</strong> While this assistant is trained on Coach Scott's knowledge and services, responses are AI-generated and may occasionally contain errors. Always verify important information directly with Coach Scott, especially regarding:</p>
+            </div>
+            
+            <ul style="margin-top: 12px;">
+                <li>Medical conditions or health concerns</li>
+                <li>Specific dietary restrictions or allergies</li>
+                <li>Booking confirmations and payments</li>
+                <li>Emergency or urgent matters</li>
+            </ul>
+            
+            <p style="margin-top: 12px;"><strong>For personalized advice, book a consultation with Coach Scott directly.</strong></p>
+            
+            <p style="margin-top: 12px; font-size: 12px; color: #666;"><strong>Your conversation history is saved locally and is private.</strong></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configuration
+    var FUNCTION_URL = 'https://yxndmpwqvdatkujcukdv.supabase.co/functions/v1/faq-bot';
+    var STORAGE_KEY = 'coach_scott_chat_history';
+    var MAX_HISTORY = 20;
+
+    // Load history on startup
+    window.addEventListener('DOMContentLoaded', function() {
+        loadHistory();
+        document.getElementById('chat-input').focus();
+    });
+
+    // Enter key to send
+    document.getElementById('chat-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMsg();
+        }
+    });
+
+    function loadHistory() {
+        var stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            var history = JSON.parse(stored);
+            if (history.length > 0) {
+                document.getElementById('chat-box').innerHTML = '';
+                history.forEach(function(msg) {
+                    appendMessageToUI(msg.content, msg.role);
+                });
+            }
+        }
+    }
+
+    function sendMsg() {
+        var input = document.getElementById('chat-input');
+        var chatBox = document.getElementById('chat-box');
+        var text = input.value.trim();
+        
+        if (!text) return;
+
+        appendMessageToUI(text, 'user');
+        saveMessage(text, 'user');
+        
+        input.value = '';
+        input.disabled = true;
+
+        var loadingId = 'loading-' + Date.now();
+        var loadingDiv = document.createElement('div');
+        loadingDiv.id = loadingId;
+        loadingDiv.style.cssText = 'align-self: flex-start; color: #888; font-size: 12px; margin-left: 10px;';
+        loadingDiv.textContent = 'Coach Scott Bot is typing...';
+        chatBox.appendChild(loadingDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        var history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        var messages = history.slice(-MAX_HISTORY);
+
+        fetch(FUNCTION_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: messages })
+        })
+        .then(function(res) {
+            return res.json();
+        })
+        .then(function(data) {
+            var loadingEl = document.getElementById(loadingId);
+            if (loadingEl) loadingEl.remove();
+
+            if (data.reply) {
+                appendMessageToUI(data.reply, 'assistant');
+                saveMessage(data.reply, 'assistant');
+            } else {
+                appendMessageToUI("Sorry, I couldn't get a response.", 'assistant');
+            }
+
+            input.disabled = false;
+            input.focus();
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+            var loadingEl = document.getElementById(loadingId);
+            if (loadingEl) loadingEl.remove();
+            appendMessageToUI("Sorry, something went wrong.", 'assistant');
+            input.disabled = false;
+            input.focus();
+        });
+    }
+
+    function saveMessage(content, role) {
+        var history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        history.push({ role: role, content: content });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    }
+
+    function askQuestion(btn) {
+        var input = document.getElementById('chat-input');
+        input.value = btn.textContent;
+        sendMsg();
+    }
+
+    function appendMessageToUI(text, sender) {
+        var chatBox = document.getElementById('chat-box');
+        var div = document.createElement('div');
+        
+        if (sender === 'user') {
+            div.style.cssText = "align-self: flex-end; background-color: #007BFF; color: white; padding: 10px 15px; border-radius: 18px 18px 0 18px; max-width: 80%; word-wrap: break-word; white-space: pre-wrap;";
+            div.textContent = text;
+        } else {
+            div.style.cssText = "align-self: flex-start; background-color: #e9e9eb; color: black; padding: 10px 15px; border-radius: 18px 18px 18px 0; max-width: 80%; word-wrap: break-word; white-space: pre-wrap;";
+            div.textContent = text;
+        }
+        
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+</script>

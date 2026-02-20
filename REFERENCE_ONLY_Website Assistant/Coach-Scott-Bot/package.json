@@ -1,0 +1,12 @@
+{
+  "name": "coach-scott-bot-scripts",
+  "version": "1.0.0",
+  "description": "Helper scripts for Coach Scott Bot",
+  "scripts": {
+    "upload-knowledge": "node scripts/upload_knowledge.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^16.3.1"
+  }
+}

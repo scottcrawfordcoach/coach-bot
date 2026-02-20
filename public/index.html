@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coaching Assistant</title>
+    <style>
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; min-height: 100vh; background: #f0f2f5; }
+
+        /* Container for side-by-side layout */
+        .coaching-page-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Chat column */
+        .coaching-chat-column {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 40px);
+        }
+
+        /* Info column */
+        .coaching-info-column {
+            width: 350px;
+            flex-shrink: 0;
+        }
+
+        /* Chat container */
+        #coaching-container {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            position: relative;
+        }
+
+        /* Quick starter buttons */
+        .coaching-starters {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 14px 0 0 0;
+            flex-shrink: 0;
+        }
+
+        .coaching-starters button {
+            background: white;
+            color: #2A9D8F;
+            border: 1.5px solid #2A9D8F;
+            padding: 10px 8px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            text-align: center;
+            word-wrap: break-word;
+            line-height: 1.3;
+        }
+
+        .coaching-starters button:hover {
+            background: #2A9D8F;
+            color: white;
+        }
+
+        /* Info cards */
+        .coaching-info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .coaching-info-card h2 { font-size: 18px; color: #2A9D8F; margin: 0 0 15px 0; }
+        .coaching-info-card h3 { font-size: 16px; color: #333; margin: 16px 0 8px 0; }
+        .coaching-info-card p { line-height: 1.5; font-size: 13px; color: #555; margin: 0 0 10px 0; }
+        .coaching-info-card ul { margin: 0 0 12px 20px; padding: 0; }
+        .coaching-info-card li { margin-bottom: 6px; line-height: 1.4; font-size: 13px; color: #555; }
+
+        .coaching-disclaimer {
+            background-color: #e8f5f2;
+            border-left: 4px solid #2A9D8F;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 4px;
+        }
+        .coaching-disclaimer p { color: #1a6b61; font-size: 12px; margin: 0; line-height: 1.4; }
+
+        /* Typing indicator */
+        .coaching-typing { align-self: flex-start; color: #888; font-size: 12px; margin-left: 10px; }
+
+        /* End Session button */
+        .coaching-end-session-btn {
+            background: none;
+            color: #c0392b;
+            border: 1.5px solid #c0392b;
+            padding: 10px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .coaching-end-session-btn:hover { background: #c0392b; color: white; }
+
+        /* End Session confirmation overlay */
+        .coaching-confirm-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: 12px;
+        }
+        .coaching-confirm-box {
+            background: white;
+            border-radius: 12px;
+            padding: 24px 28px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+            text-align: center;
+            max-width: 320px;
+        }
+        .coaching-confirm-box p { font-size: 14px; color: #333; margin: 0 0 20px 0; line-height: 1.5; }
+        .coaching-confirm-box button {
+            padding: 10px 22px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            margin: 0 6px;
+            transition: all 0.2s ease;
+        }
+        .coaching-confirm-yes { background: #c0392b; color: white; }
+        .coaching-confirm-yes:hover { background: #a93226; }
+        .coaching-confirm-no { background: #eee; color: #333; }
+        .coaching-confirm-no:hover { background: #ddd; }
+
+        /* Duration picker */
+        .coaching-duration-picker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 40px 20px;
+            background-color: #f9fafa;
+            text-align: center;
+        }
+        .coaching-duration-picker p { font-size: 16px; color: #333; margin: 0 0 24px 0; line-height: 1.5; }
+        .coaching-duration-options { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .coaching-duration-options button {
+            background: white;
+            color: #2A9D8F;
+            border: 2px solid #2A9D8F;
+            padding: 14px 28px;
+            border-radius: 24px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 120px;
+        }
+        .coaching-duration-options button:hover { background: #2A9D8F; color: white; }
+
+        /* Duration badge */
+        .coaching-duration-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            margin-left: 8px;
+            opacity: 0.9;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 968px) {
+            .coaching-page-container { flex-direction: column; }
+            .coaching-info-column { width: 100%; order: 2; }
+            .coaching-chat-column { order: 1; max-height: none; display: block; }
+            #coaching-container { height: 500px; flex: none; }
+            .coaching-starters { grid-template-columns: repeat(2, 1fr); padding: 12px 0 0 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="coaching-page-container">
+    <!-- LEFT: Chat Column -->
+    <div class="coaching-chat-column">
+        <div id="coaching-container">
+
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #2A9D8F, #238a7e); color: white; padding: 15px; display: flex; align-items: center;">
+                <div style="width: 40px; height: 40px; background-color: rgba(255,255,255,0.2); border-radius: 50%; margin-right: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                    &#x1f331;
+                </div>
+                <div>
+                    <div style="font-weight: bold; font-size: 16px;">Coaching Assistant <span id="coaching-duration-badge" class="coaching-duration-badge"></span></div>
+                    <div style="font-size: 12px; opacity: 0.9;">Your thinking partner</div>
+                </div>
+            </div>
+
+            <!-- Duration Picker -->
+            <div id="coaching-duration-picker" class="coaching-duration-picker">
+                <p>How long do you have for our session today?</p>
+                <div class="coaching-duration-options">
+                    <button onclick="coachSelectDuration(15)">15 minutes</button>
+                    <button onclick="coachSelectDuration(30)">30 minutes</button>
+                    <button onclick="coachSelectDuration(60)">60 minutes</button>
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div id="coaching-chat-box" style="flex: 1; overflow-y: auto; padding: 15px; background-color: #f9fafa; display: none; flex-direction: column; gap: 10px;"></div>
+
+            <!-- Input Area -->
+            <div id="coaching-input-bar" style="padding: 15px; border-top: 1px solid #eee; display: none; gap: 10px; background: white; align-items: center;">
+                <input id="coaching-input" type="text" placeholder="Share what's on your mind..." style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px;">
+                <button onclick="coachSend()" style="background-color: #2A9D8F; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold;">Send</button>
+                <button class="coaching-end-session-btn" onclick="coachEndSession()">End Session</button>
+            </div>
+
+        </div>
+
+        <!-- Conversation Starters -->
+        <div class="coaching-starters">
+            <button onclick="coachAsk(this)">I have a decision I'm wrestling with</button>
+            <button onclick="coachAsk(this)">I feel stuck and I'm not sure why</button>
+            <button onclick="coachAsk(this)">I want to think through a goal</button>
+            <button onclick="coachAsk(this)">Something is bothering me at work</button>
+            <button onclick="coachAsk(this)">I want more clarity on what I want</button>
+            <button onclick="coachAsk(this)">I keep putting something off</button>
+        </div>
+    </div>
+
+    <!-- RIGHT: Info Column -->
+    <div class="coaching-info-column">
+        <div class="coaching-info-card">
+            <h2>&#x1f91d; What Is This?</h2>
+            <p>This is an AI-powered coaching conversation — not therapy, not advice, not consulting.</p>
+            <p>A coach helps you <strong>think more clearly</strong> by listening deeply, reflecting back what you say, and asking questions that open up new perspectives.</p>
+            <h3>What to expect:</h3>
+            <ul>
+                <li><strong>No advice</strong> — You'll be asked questions, not told what to do</li>
+                <li><strong>Your words</strong> — The coach mirrors your language, not its own</li>
+                <li><strong>One question at a time</strong> — Space to think without overwhelm</li>
+                <li><strong>Your pace</strong> — Go wherever feels most useful to you</li>
+            </ul>
+            <h3>Good starting points:</h3>
+            <ul>
+                <li>A decision you're weighing</li>
+                <li>A goal you want to clarify</li>
+                <li>Something you feel stuck on</li>
+                <li>A situation you'd like to see differently</li>
+            </ul>
+        </div>
+
+        <div class="coaching-info-card">
+            <h2>&#x26A0;&#xFE0F; Important</h2>
+            <p><strong>This is an AI coaching assistant, not a human coach or therapist.</strong></p>
+            <div class="coaching-disclaimer">
+                <p><strong>Please note:</strong> This assistant follows ICF (International Coaching Federation) coaching guidelines. It will not diagnose, give medical advice, or provide therapy. If you are in crisis or need clinical support, please contact a qualified professional.</p>
+            </div>
+            <ul style="margin-top: 12px;">
+                <li>Not a substitute for professional mental health support</li>
+                <li>AI-generated responses may not always be perfect</li>
+                <li>Your conversation is stored locally in your browser only</li>
+            </ul>
+            <p style="margin-top: 12px; font-size: 12px; color: #666;">
+                <strong>Session data stays in your browser.</strong> Use the <em>End Session</em> button to save a transcript and start fresh.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── Configuration ──────────────────────────────────────────────────
+    var COACH_FUNCTION_URL = 'https://yxndmpwqvdatkujcukdv.supabase.co/functions/v1/coach-bot';
+    var COACH_STORAGE_KEY = 'coaching_assistant_history';
+    var COACH_DURATION_KEY = 'coaching_session_duration';
+    var COACH_MAX_HISTORY = 50;
+    var COACH_INITIAL_MESSAGE = "Hey. What's on your mind?";
+    var coachSessionDuration = null;
+
+    // ── Initialise ─────────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', function() {
+        var savedDuration = localStorage.getItem(COACH_DURATION_KEY);
+        var savedHistory = localStorage.getItem(COACH_STORAGE_KEY);
+
+        if (savedDuration && savedHistory) {
+            coachSessionDuration = parseInt(savedDuration, 10);
+            coachShowChatUI();
+            coachLoadHistory();
+        }
+    });
+
+    document.getElementById('coaching-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') coachSend();
+    });
+
+    // ── Duration selection ──────────────────────────────────────────────
+    function coachSelectDuration(minutes) {
+        coachSessionDuration = minutes;
+        localStorage.setItem(COACH_DURATION_KEY, String(minutes));
+        coachShowChatUI();
+        coachAppendUI(COACH_INITIAL_MESSAGE, 'assistant');
+        document.getElementById('coaching-input').focus();
+    }
+
+    function coachShowChatUI() {
+        document.getElementById('coaching-duration-picker').style.display = 'none';
+        document.getElementById('coaching-chat-box').style.display = 'flex';
+        document.getElementById('coaching-input-bar').style.display = 'flex';
+        var badge = document.getElementById('coaching-duration-badge');
+        if (badge) badge.textContent = coachSessionDuration + ' min session';
+    }
+
+    // ── Send message ───────────────────────────────────────────────────
+    function coachSend() {
+        var input = document.getElementById('coaching-input');
+        var chatBox = document.getElementById('coaching-chat-box');
+        var text = input.value.trim();
+        if (!text) return;
+
+        coachAppendUI(text, 'user');
+        coachSaveMsg(text, 'user');
+        input.value = '';
+        input.disabled = true;
+
+        var loadingId = 'coaching-loading-' + Date.now();
+        var loadingDiv = document.createElement('div');
+        loadingDiv.id = loadingId;
+        loadingDiv.className = 'coaching-typing';
+        loadingDiv.textContent = 'Coach is reflecting...';
+        chatBox.appendChild(loadingDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        var history = JSON.parse(localStorage.getItem(COACH_STORAGE_KEY) || '[]');
+
+        fetch(COACH_FUNCTION_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: history, session_duration_minutes: coachSessionDuration })
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            var el = document.getElementById(loadingId);
+            if (el) el.remove();
+            if (data.reply) {
+                coachAppendUI(data.reply, 'assistant');
+                coachSaveMsg(data.reply, 'assistant');
+            } else if (data.error) {
+                coachAppendUI('Something went wrong. Please try again.', 'assistant');
+            }
+            input.disabled = false;
+            input.focus();
+        })
+        .catch(function(err) {
+            console.error('Coaching fetch error:', err);
+            var el = document.getElementById(loadingId);
+            if (el) el.remove();
+            coachAppendUI('Sorry, something went wrong. Please try again.', 'assistant');
+            input.disabled = false;
+            input.focus();
+        });
+    }
+
+    // ── Persist messages ───────────────────────────────────────────────
+    function coachSaveMsg(content, role) {
+        var history = JSON.parse(localStorage.getItem(COACH_STORAGE_KEY) || '[]');
+        history.push({ role: role, content: content });
+        localStorage.setItem(COACH_STORAGE_KEY, JSON.stringify(history));
+    }
+
+    function coachLoadHistory() {
+        var stored = localStorage.getItem(COACH_STORAGE_KEY);
+        if (stored) {
+            var history = JSON.parse(stored);
+            if (history.length > 0) {
+                document.getElementById('coaching-chat-box').innerHTML = '';
+                history.forEach(function(msg) {
+                    coachAppendUI(msg.content, msg.role);
+                });
+            }
+        }
+    }
+
+    // ── End Session ────────────────────────────────────────────────────
+    function coachEndSession() {
+        var container = document.getElementById('coaching-container');
+        var overlay = document.createElement('div');
+        overlay.className = 'coaching-confirm-overlay';
+        overlay.id = 'coaching-confirm-overlay';
+        overlay.innerHTML =
+            '<div class="coaching-confirm-box">' +
+            '<p>Ready to end the session and download a transcript?</p>' +
+            '<button class="coaching-confirm-yes" id="coaching-btn-yes">Yes, end session</button>' +
+            '<button class="coaching-confirm-no" id="coaching-btn-no">No, continue</button>' +
+            '</div>';
+        container.appendChild(overlay);
+
+        document.getElementById('coaching-btn-yes').addEventListener('click', function() { coachConfirmEnd(true); });
+        document.getElementById('coaching-btn-no').addEventListener('click', function() { coachConfirmEnd(false); });
+    }
+
+    function coachConfirmEnd(confirmed) {
+        var overlay = document.getElementById('coaching-confirm-overlay');
+        if (overlay) overlay.remove();
+        if (!confirmed) return;
+
+        // Build markdown transcript
+        var history = JSON.parse(localStorage.getItem(COACH_STORAGE_KEY) || '[]');
+        if (history.length > 0) {
+            var md = '# Coaching Session Transcript\n';
+            md += '**Date:** ' + new Date().toLocaleString() + '\n';
+            md += '**Session length:** ' + (coachSessionDuration || '?') + ' minutes\n\n---\n\n';
+            history.forEach(function(msg) {
+                var label = msg.role === 'user' ? '**You**' : '**Coach**';
+                md += label + '\n\n' + msg.content + '\n\n---\n\n';
+            });
+
+            var blob = new Blob([md], { type: 'text/markdown' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'coaching-session-' + new Date().toISOString().slice(0, 10) + '.md';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 300);
+        }
+
+        // Reset
+        localStorage.removeItem(COACH_STORAGE_KEY);
+        localStorage.removeItem(COACH_DURATION_KEY);
+        coachSessionDuration = null;
+        coachResetChat();
+    }
+
+    function coachResetChat() {
+        document.getElementById('coaching-chat-box').innerHTML = '';
+        document.getElementById('coaching-chat-box').style.display = 'none';
+        document.getElementById('coaching-input-bar').style.display = 'none';
+        document.getElementById('coaching-duration-picker').style.display = 'flex';
+        var badge = document.getElementById('coaching-duration-badge');
+        if (badge) badge.textContent = '';
+    }
+
+    // ── Quick-start buttons ────────────────────────────────────────────
+    function coachAsk(btn) {
+        document.getElementById('coaching-input').value = btn.textContent;
+        coachSend();
+    }
+
+    // ── Render message bubble ──────────────────────────────────────────
+    function coachAppendUI(text, sender) {
+        var chatBox = document.getElementById('coaching-chat-box');
+        var div = document.createElement('div');
+        if (sender === 'user') {
+            div.style.cssText = 'align-self: flex-end; background-color: #2A9D8F; color: white; padding: 10px 15px; border-radius: 18px 18px 0 18px; max-width: 80%; word-wrap: break-word; white-space: pre-wrap;';
+        } else {
+            div.style.cssText = 'align-self: flex-start; background-color: #e9e9eb; color: black; padding: 10px 15px; border-radius: 18px 18px 18px 0; max-width: 80%; word-wrap: break-word; white-space: pre-wrap;';
+        }
+        div.textContent = text;
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+</script>
+
+</body>
+</html>
